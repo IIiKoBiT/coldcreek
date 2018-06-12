@@ -24,6 +24,10 @@ cron.schedule(config.cronIntervalMask, function(){
     Cron.start(app);
 });
 
+cron.schedule("*/2 * * * *", function(){
+    Cron.checkData(app);
+});
+
 app.use('/img',express.static('img'));
 
 app.use(require('./routes/web'));

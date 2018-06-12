@@ -18,6 +18,7 @@ const ApiController = {
           ],
           limit:24
       });
+
       let waitino = await Waitino.findAll({
           order:[
               ['date','DESC'],
@@ -34,8 +35,8 @@ const ApiController = {
 
           let item = {
               time:date,
-              we: weka[i].value,
-              wa: waitino[i].value
+              we: Math.ceil(weka[i].value),
+              wa: Math.ceil(waitino[i].value)
           };
 
           data.push(item);
