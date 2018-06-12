@@ -12,10 +12,10 @@ app.set('view engine', 'pug');
 
 mailer.extend(app, {
     from: config.mail_client.email,
-    host: config.mail_client.host, // hostname
-    secureConnection: true, // use SSL
-    port: config.mail_client.port, // port for secure SMTP
-    transportMethod: config.mail_client.transportMethod, // default is SMTP. Accepts anything that nodemailer accepts
+    host: config.mail_client.host,
+    secureConnection: true,
+    port: config.mail_client.port,
+    transportMethod: config.mail_client.transportMethod,
     auth: config.mail_client.auth
 });
 
@@ -24,7 +24,7 @@ cron.schedule(config.cronIntervalMask, function(){
     Cron.start(app);
 });
 
-cron.schedule("*/2 * * * *", function(){
+cron.schedule("2 * * * *", function(){
     Cron.checkData(app);
 });
 

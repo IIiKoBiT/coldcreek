@@ -5,10 +5,13 @@
     "database": "",
     "host": "localhost",
     "dialect": "mysql",
-    "pageUrlToGetImage":"",// URL to make image of chart
-    "cronIntervalMask":"",// interval of cron function execution
+    "wekaTrigger":true,
+    "waitinoTrigger":false,
+    "pageUrlToGetImage":"",
+    "cronIntervalMask":"",
     "mail_client":{
       "email":"",
+      "receiverEmail":"",
       "host": "",
       "port":465,
       "transportMethod":"",
@@ -18,25 +21,20 @@
       }
     }
   },
-  "test": {
-    "username": "",
-    "password": null,
-    "database": "",
-    "host": "",
-    "dialect": "mysql"
-
-  },
   "production": {
     "username": "root",
     "password": "",
     "database": "",
     "host": "localhost",
     "dialect": "mysql",
+    "wekaTrigger":true,
+    "waitinoTrigger":false,
     "pageUrlToGetImage":"",
     "cronIntervalMask":"",
     "mail_client":{
       "email":"",
       "host": "",
+      "receiverEmail":"",
       "port":465,
       "transportMethod":"",
       "auth": {

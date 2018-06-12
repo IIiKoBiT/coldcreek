@@ -61,7 +61,7 @@ const ApiController = {
 
         response.mailer.render('email', {
             image: 'http://localhost:3000/img/'+filename,
-            to: 'avadakkeddavra@gmail.com',
+            to: config.mail_client.receiverEmail,
             subject: 'Test Email',
             otherProperty: 'Other Property',
         }, function (err,message) {
@@ -80,13 +80,10 @@ const ApiController = {
     formatDate: function(date)
     {
         var options = {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
             hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric'
+            minute: 'numeric'
         };
+
          let dateTime = new Date(date);
 
          return dateTime.toLocaleString('en-US',options)

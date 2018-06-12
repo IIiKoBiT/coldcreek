@@ -4,6 +4,10 @@ const env = process.env.NODE_ENV || "development";
 const config = require(path.join(__dirname,'./../', 'config', 'config.json'))[env];
 const Waitino = require('./Models/index').data_waitino_take_aggregate;
 const Weka = require('./Models/index').data_weka_take_aggregate;
+const sequelize = require('./Models/index').sequelize;
+const Sequelize = require('./Models/index').Sequelize;
+
+
 
 const Cron = {
 
@@ -35,37 +39,39 @@ const Cron = {
     },
     checkData: async function(app){
 
-        let weka = await Weka.findAll({
-            order:[
-                ['date','DESC'],
-            ],
-            limit:4
+        let weka = await sequelize.query('SELECT sum(`value`) AS `sum` FROM (SELECT * FROM `data_weka_take_aggregate` AS `data_weka_take_aggregate` ORDER BY `data_weka_take_aggregate`.`date` DESC LIMIT 4)  AS `sum`',{
+            type:Sequelize.QueryTypes.SELECT,
+            raw:true
         });
 
-        let waitino = await Waitino.findAll({
-            order:[
-                ['date','DESC'],
-            ],
-            limit:4
+
+        let waitino = await sequelize.query('SELECT sum(`value`) AS `sum` FROM (SELECT * FROM `data_waitino_take_aggregate` AS `data_waitino_take_aggregate` ORDER BY `data_waitino_take_aggregate`.`date` DESC LIMIT 4)  AS `sum`',{
+            type:Sequelize.QueryTypes.SELECT,
+            raw:true
         });
 
-        let wekaCounter = 0;
-        let waitinoCounter = 0;
-        for(let i = 0; i < 4; i++)
-        {
-            if(weka[i].value == 0)
-            {
-                wekaCounter++;
-            }
+        console.log(weka[0]['sum']);
 
-            if(waitino[i].value == 0){
-                waitinoCounter++;
-            }
-        }
-
-        if(wekaCounter == 4 || waitinoCounter == 4)
+        if(config.wekaTrigger && weka[0]['sum'] == 0)
         {
             app.mailer.send('emailChecking', {
+                item:"weka",
+                to: config.mail_client.receiverEmail,
+                subject: 'Test Email',
+                otherProperty: 'Other Property',
+            }, function (err) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                console.log('Email sent');
+            });
+        }
+
+        if(config.waitinoTrigger &&  waitino[0]['sum'] == 0)
+        {
+            app.mailer.send('emailChecking', {
+                item:"waitino",
                 to: 'avadakkeddavra@gmail.com',
                 subject: 'Test Email',
                 otherProperty: 'Other Property',
@@ -77,6 +83,7 @@ const Cron = {
                 console.log('Email sent');
             });
         }
+
     }
 
 };
