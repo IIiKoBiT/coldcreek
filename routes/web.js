@@ -7,12 +7,8 @@ bodyParser.urlencoded({extended: true});
 bodyParser.json({extended: true});
 
 
-
-
-Router.get('/api', App.controllers.api.index);
 Router.get('/api/data', App.controllers.api.getData);
-Router.get('/api/image', App.controllers.api.getPageImage);
-Router.get('/api/email', App.controllers.api.emailSend);
+Router.get('/api/email', App.controllers.api.testEmailSending);
 
 
 module.exports = Router;

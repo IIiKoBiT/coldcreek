@@ -1,16 +1,14 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const mailer = require('express-mailer');
 const app  = express();
 const path = require("path");
-let env = process.env.NODE_ENV || "development";
-let config = require(path.join(__dirname,'./', 'config', 'config.json'))[env];
-
+const env = process.env.NODE_ENV || "development";
+const config = require(path.join(__dirname,'./', 'config', 'config.json'))[env];
+const cron = require('node-cron');
+const Cron = require('./app/Cron');
 
 app.set('views', './views');
 app.set('view engine', 'pug');
-
-
 
 mailer.extend(app, {
     from: config.mail_client.email,
@@ -21,12 +19,12 @@ mailer.extend(app, {
     auth: config.mail_client.auth
 });
 
+
+cron.schedule(config.cronIntervalMask, function(){
+    Cron.start(app);
+});
+
 app.use('/img',express.static('img'));
-
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(bodyParser.raw());
-
 
 app.use(require('./routes/web'));
 

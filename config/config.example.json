@@ -5,6 +5,8 @@
     "database": "",
     "host": "localhost",
     "dialect": "mysql",
+    "pageUrlToGetImage":"",// URL to make image of chart
+    "cronIntervalMask":"",// interval of cron function execution
     "mail_client":{
       "email":"",
       "host": "",
@@ -25,11 +27,23 @@
 
   },
   "production": {
-    "username": "",
-    "password": null,
+    "username": "root",
+    "password": "",
     "database": "",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "host": "localhost",
+    "dialect": "mysql",
+    "pageUrlToGetImage":"",
+    "cronIntervalMask":"",
+    "mail_client":{
+      "email":"",
+      "host": "",
+      "port":465,
+      "transportMethod":"",
+      "auth": {
+        "user": "",
+        "pass": ""
+      }
+    }
 
   }
 

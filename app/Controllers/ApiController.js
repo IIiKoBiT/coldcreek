@@ -1,17 +1,17 @@
 const Waitino = require('./../Models/index').data_waitino_take_aggregate;
 const Weka = require('./../Models/index').data_weka_take_aggregate;
 const phantom = require('phantom');
-
+const path = require("path");
+const env = process.env.NODE_ENV || "development";
+const config = require(path.join(__dirname,'./../../', 'config', 'config.json'))[env];
 
 const ApiController = {
 
-    index: async function(request,response)
-    {
-      response.render('index', { title: 'Hey', message: 'Hello there!'});
-    },
-
     getData: async function(request,response)
     {
+
+      ApiController.cors(response);
+
       let weka = await Weka.findAll({
           order:[
               ['date','DESC'],
@@ -44,45 +44,35 @@ const ApiController = {
       response.send(data);
 
     },
-    emailSend:async function(request,response)
+    testEmailSending:async function(request,response)
     {
 
-            response.mailer.send('index', {
-                image: 'http://localhost:3000/img/1528726724492chart.png',
-                to: 'avadakkeddavra@gmail.com', // REQUIRED. This can be a comma delimited string just like a normal email to field.
-                subject: 'Test Email', // REQUIRED.
-                otherProperty: 'Other Property', // All additional properties are also passed to the template as local variables.
-            }, function (err,message) {
-                if (err) {
-                    // handle error
-                    console.log(err);
-                    response.send('There was an error sending the email');
-                    return;
-                }
-                response.header('Content-Type', 'text/html');
-                response.send(message);
-            });
+        const instance = await phantom.create();
+        const page = await instance.createPage();
 
-    },
+        await page.open(config.pageUrlToGetImage);
+        await page.property('content');
 
-    getPageImage: async function(request,response)
-    {
+        const filename = Date.now()+'chart.png';
+        page.render('./img/'+filename);
 
-          const instance = await phantom.create();
-          const page = await instance.createPage();
-          await page.on('onResourceRequested', function(requestData) {
-              // console.info('Requesting', requestData.url);
-          });
+        instance.exit();
 
-          const status = await page.open('http://localhost:3000/api');
-          const content = await page.property('content');
+        response.mailer.render('email', {
+            image: 'http://localhost:3000/img/'+filename,
+            to: 'avadakkeddavra@gmail.com',
+            subject: 'Test Email',
+            otherProperty: 'Other Property',
+        }, function (err,message) {
 
-          const dateHash = Date.now();
-          page.render('./img/'+dateHash+'chart.png');
-
-          await instance.exit();
-
-          response.send({success:true});
+            if (err) {
+                console.log(err);
+                response.send('There was an error sending the email');
+                return;
+            }
+            response.header('Content-Type', 'text/html');
+            response.send(message);
+        });
 
     },
 
@@ -99,6 +89,12 @@ const ApiController = {
          let dateTime = new Date(date);
 
          return dateTime.toLocaleString('en-US',options)
+    },
+
+    cors: function (response){
+        response.setHeader('Access-Control-Allow-Origin', '*');
+        response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+        response.setHeader('Access-Control-Allow-Credentials', true);
     }
 
 
